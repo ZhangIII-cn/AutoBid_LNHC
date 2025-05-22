@@ -30,6 +30,9 @@ def get_headers():
     }
     return headers
 
+def load_excel():
+
+
 def write_excel(Output_list,str="中国政府采购网"):
     Time_Publishment = Output_list['Time_Publishment']
     Perchaser = Output_list['Perchaser']
@@ -42,12 +45,17 @@ def write_excel(Output_list,str="中国政府采购网"):
     # 检查文件是否存在----------------------------------------------------------
     file_exists = os.path.isfile(Filename)
     # 写入文件（追加或新建）
-    with open(Filename, mode="a" if file_exists else "w", newline="", encoding="utf-8") as f:
+    with open(Filename, mode="a" if file_exists else "w", newline="", encoding="ansi") as f:
         writer_dict = csv.DictWriter(f,fieldnames=Output_list.keys())
         writer = csv.writer(f)
         # 如果是新文件，先写入表头
         if not file_exists:
-            writer.writerow(['发布日期','采购部门','代理机构','省份','项目名称','公告类型'])
+            writer.writerow(['发布日期','采购部门','代理机构','省份','项目名称','公告类型','项目链接'])
+
+        #检查该行数据是否已存在于表中 --------------------------------------------------------------------
+        reader = csv.DictReader(f)
+        for row in reader:
+            print(row)
         # 写入数据（自动追加到末尾）
         writer_dict.writerow(Output_list)
     print(f"数据已{'追加' if file_exists else '新建'}至文件: {Filename}")
@@ -113,7 +121,7 @@ for Keyword in Keyword_Dict:    # searchtype = 2 : 搜全文 ; timeType = 2(近�
         Li_list=UL_list[0].find_all('li')
         for index in range(len(Li_list)):
             i=Li_list[index]    # i is tag type
-            print(i)
+            # print(i)
             Project_name=i.find("a").get_text(strip=True)
             Project_type=i.find("strong").get_text(strip=True)
             Spans=re.sub(r'\s+', '',i.find("span").text).split('|')  # e.g. 2025.05.1416:00:19|采购人：冠县农业农村局|代理机构：北京广普达工程咨询有限公司中标公告|山东|
@@ -121,7 +129,7 @@ for Keyword in Keyword_Dict:    # searchtype = 2 : 搜全文 ; timeType = 2(近�
             Perchaser=Spans[1].split("：")[1]
             Agency=Spans[2].split("：")[1]
             Province=Spans[3]
-            Output_list={'Time_Publishment':Time_Publishment,'Perchaser':Perchaser,'Agency':Agency,'Province':Province,'Project_name':Project_name,'Project_type':Project_type}
+            Output_list={'Time_Publishment':Time_Publishment,'Perchaser':Perchaser,'Agency':Agency,'Province':Province,'Project_name':Project_name,'Project_type':Project_type,'URL':URL_list[index]}
             write_excel(Output_list)
             # exit()#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             # print("-----------------------------")
