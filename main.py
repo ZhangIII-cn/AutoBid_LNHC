@@ -11,6 +11,7 @@ import csv
 Keyword_Dict=['无人机'] #%E6%97%A0%E4%BA%BA%E6%9C%BA
 Region_Dict =['辽宁','大连','山东','北京']
 Page_number=1
+CSV_Set=set()
 
 def get_headers():
     ua = UserAgent()
@@ -30,7 +31,18 @@ def get_headers():
     }
     return headers
 
-def load_excel():
+def load_excel(str="中国政府采购网"):
+    # 检查该行数据是否已存在于表中 --------------------------------------------------------------------
+    Filename = str + f"标书信息_{datetime.now().strftime('%Y_%m_%d')}.csv"
+    file_exists = os.path.isfile(Filename)
+    if not file_exists:
+        print("文件不存在")
+        return
+    with open(Filename, mode="r", newline="", encoding="ansi") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            value=row['项目名称']
+            CSV_Set.add(value)
 
 
 def write_excel(Output_list,str="中国政府采购网"):
@@ -52,17 +64,17 @@ def write_excel(Output_list,str="中国政府采购网"):
         if not file_exists:
             writer.writerow(['发布日期','采购部门','代理机构','省份','项目名称','公告类型','项目链接'])
 
-        #检查该行数据是否已存在于表中 --------------------------------------------------------------------
-        reader = csv.DictReader(f)
-        for row in reader:
-            print(row)
+
         # 写入数据（自动追加到末尾）
         writer_dict.writerow(Output_list)
-    print(f"数据已{'追加' if file_exists else '新建'}至文件: {Filename}")
-
+    # print(f"数据已{'追加' if file_exists else '新建'}至文件: {Filename}")
     return
 
-for Keyword in Keyword_Dict:    # searchtype = 2 : 搜全文 ; timeType = 2(近一周) 3(近一月)
+
+
+# ----------------------   MAIN   -------------------------------------------------------------
+load_excel()
+for Keyword in Keyword_Dict:   # searchtype = 2 : 搜全文 ; timeType = 2(近一周) 3(近一月)
     time.sleep(1)
     #---------------构造基本Soup：--------------
     url_base = 'https://search.ccgp.gov.cn/bxsearch?searchtype=2&page_index=1&bidSort=0&buyerName=&projectId=&pinMu=0&bidType=0&dbselect=bidx&kw=' + Keyword + '&start_time=2025%3A05%3A13&end_time=2025%3A05%3A20&timeType=2&displayZone=&zoneId=&pppStatus=0&agentName='
@@ -115,7 +127,7 @@ for Keyword in Keyword_Dict:    # searchtype = 2 : 搜全文 ; timeType = 2(近�
         # ----------------------获取当前页中所有ul项的url链接-----------------------------------------------
         Str_url = re.findall(r'"([^"]*)"', Str_script)
         URL_list = Str_url[0].split(',')
-        print(URL_list)
+        # print(URL_list)
 
         UL_list = Soup.find_all("ul", class_="vT-srch-result-list-bid")
         Li_list=UL_list[0].find_all('li')
@@ -130,7 +142,10 @@ for Keyword in Keyword_Dict:    # searchtype = 2 : 搜全文 ; timeType = 2(近�
             Agency=Spans[2].split("：")[1]
             Province=Spans[3]
             Output_list={'Time_Publishment':Time_Publishment,'Perchaser':Perchaser,'Agency':Agency,'Province':Province,'Project_name':Project_name,'Project_type':Project_type,'URL':URL_list[index]}
-            write_excel(Output_list)
+            if Project_name not in CSV_Set:
+                write_excel(Output_list)
+            else:
+                print("信息已存在")
             # exit()#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             # print("-----------------------------")
 
