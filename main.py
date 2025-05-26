@@ -102,7 +102,10 @@ for Keyword in Keyword_Dict:   # searchtype = 2 : 搜全文 ; timeType = 2(近�
 
     # ---------------获取每页信息：--------------------------------------------------------------------
     for page_index in range(1,Page_number+1):
-        time.sleep(3)
+        if page_index<8:
+            time.sleep(3)
+        else :
+            time.sleep(5)
         print(page_index)  # searchtype = 2 : 搜全文 ; timeType = 2(近一周) 3(近一月)
         url = 'https://search.ccgp.gov.cn/bxsearch?searchtype=2&page_index='+str(page_index)+'&bidSort=0&buyerName=&projectId=&pinMu=0&bidType=0&dbselect=bidx&kw=' + Keyword + '&start_time=2025%3A05%3A13&end_time=2025%3A05%3A20&timeType=2&displayZone=&zoneId=&pppStatus=0&agentName='
         #      https://search.ccgp.gov.cn/bxsearch?searchtype=2&page_index=2                  &bidSort=0&buyerName=&projectId=&pinMu=0&bidType=0&dbselect=bidx&kw= %E6%97%A0%E4%BA%BA%E6%9C%BA&start_time=2025%3A05%3A12&end_time=2025%3A05%3A19&timeType=2&displayZone=%E5%85%A8%E9%83%A8&zoneId=&pppStatus=0&agentName=
