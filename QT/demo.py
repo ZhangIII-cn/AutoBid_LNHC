@@ -12,7 +12,6 @@ from PyQt6.QtWidgets import (
     QApplication, QWidget, QPushButton, QMainWindow, QLabel, QHBoxLayout, QVBoxLayout, QLineEdit, QMessageBox,
     QFileDialog)
 
-
 class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
@@ -23,14 +22,24 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.WindowModality.WindowModal)
         MainWindow.resize(1282, 677)
+        MainWindow.setDocumentMode(False)
+        MainWindow.setTabShape(QtWidgets.QTabWidget.TabShape.Rounded)
+        MainWindow.setDockOptions(QtWidgets.QMainWindow.DockOption.AllowTabbedDocks|QtWidgets.QMainWindow.DockOption.AnimatedDocks)
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.toolButton = QtWidgets.QToolButton(parent=self.centralwidget)
-        self.toolButton.setGeometry(QtCore.QRect(200, 210, 91, 51))
-        self.toolButton.setObjectName("toolButton")
-        self.pushButton = QtWidgets.QPushButton(parent=self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(360, 270, 271, 121))
-        self.pushButton.setObjectName("pushButton")
+        self.label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(60, 90, 71, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label.setFont(font)
+        self.label.setWordWrap(False)
+        self.label.setObjectName("label")
+        self.comboBox = QtWidgets.QComboBox(parent=self.centralwidget)
+        self.comboBox.setGeometry(QtCore.QRect(170, 100, 211, 22))
+        self.comboBox.setObjectName("comboBox")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1282, 21))
@@ -45,9 +54,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.toolButton.setText(_translate("MainWindow", "..."))
-        self.pushButton.setText(_translate("MainWindow", "PushButton"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "翰诚科技标书自动化平台"))
+        self.label.setText(_translate("MainWindow", "目标网站"))
+        self.comboBox.setItemText(0, _translate("MainWindow", "中国政府采购网（CCGP）"))
+        self.comboBox.setItemText(1, _translate("MainWindow", "项目1"))
+        self.comboBox.setItemText(2, _translate("MainWindow", "项目2"))
 
 if __name__ == '__main__':
     app = QApplication([])
