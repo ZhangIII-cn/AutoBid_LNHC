@@ -11,7 +11,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.retranslateUi(self)
 
 
-        MainWindow.setDockOptions(QtWidgets.QMainWindow.DockOption.AllowTabbedDocks|QtWidgets.QMainWindow.DockOption.AnimatedDocks) #Add DockOption to the auto pyuic py file.
+        MainWindow.setDockOptions(QtWidgets.QMainWindow.DockOption.AllowTabbedDocks|QtWidgets.QMainWindow.DockOption.AnimatedDocks)     #Add DockOption to the auto pyuic py file.
 
 
 if __name__ == '__main__':
