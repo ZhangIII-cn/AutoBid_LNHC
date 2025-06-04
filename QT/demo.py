@@ -11,12 +11,15 @@ from PyQt6.QtCore import Qt,QSize
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QPushButton, QMainWindow, QLabel, QHBoxLayout, QVBoxLayout, QLineEdit, QMessageBox,
     QFileDialog)
+from Mylib.Function_Spider import *
+
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
         self.setupUi(self)
         self.retranslateUi(self)
+
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
