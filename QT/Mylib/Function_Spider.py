@@ -41,7 +41,7 @@ def load_excel(CSV_Set,str="中国政府采购网"):
 
 
 
-def work():
+def Spider_Work():
     Keyword_Dict = ['无人机']  # %E6%97%A0%E4%BA%BA%E6%9C%BA
     Region_Dict = ['辽宁', '大连', '山东', '北京']
     Page_number = 1
