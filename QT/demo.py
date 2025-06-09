@@ -13,6 +13,44 @@ from PyQt6.QtWidgets import (
 from Mylib.Function_Spider import *
 
 
+class Ui_Dialog(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(781, 392)
+        self.progressBar = QtWidgets.QProgressBar(parent=Dialog)
+        self.progressBar.setGeometry(QtCore.QRect(140, 180, 521, 31))
+        self.progressBar.setProperty("value", 0)
+        self.progressBar.setObjectName("progressBar")
+        self.label = QtWidgets.QLabel(parent=Dialog)
+        self.label.setGeometry(QtCore.QRect(270, 90, 241, 51))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.label.setFont(font)
+        self.label.setObjectName("label")
+        self.pushButton = QtWidgets.QPushButton(parent=Dialog)
+        self.pushButton.setGeometry(QtCore.QRect(330, 270, 101, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.pushButton.setFont(font)
+        self.pushButton.setObjectName("pushButton")
+
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def retranslateUi(self, Dialog):
+        _translate = QtCore.QCoreApplication.translate
+        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        self.label.setText(_translate("Dialog", "招标信息获取中，请稍候"))
+        self.pushButton.setText(_translate("Dialog", "取消"))
+
+
+
+
 class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
@@ -21,8 +59,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def click_start(self):
         Spider_Work()
-
-
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")

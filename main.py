@@ -64,7 +64,6 @@ def write_excel(Output_list,str="中国政府采购网"):
         if not file_exists:
             writer.writerow(['发布日期','采购部门','代理机构','省份','项目名称','公告类型','项目链接'])
 
-
         # 写入数据（自动追加到末尾）
         writer_dict.writerow(Output_list)
     # print(f"数据已{'追加' if file_exists else '新建'}至文件: {Filename}")
@@ -72,7 +71,7 @@ def write_excel(Output_list,str="中国政府采购网"):
 
 
 
-# ----------------------   MAIN   -------------------------------------------------------------
+# ----------------------   MAIN   -------------------------------------------------------------------------------------------------------------------------
 load_excel()
 for Keyword in Keyword_Dict:   # searchtype = 2 : 搜全文 ; timeType = 2(近一周) 3(近一月)
     time.sleep(1)
@@ -123,6 +122,7 @@ for Keyword in Keyword_Dict:   # searchtype = 2 : 搜全文 ; timeType = 2(近�
             Soup = BeautifulSoup(res.text, 'lxml')
             Script = Soup.find_all(string=re.compile("ohtmlurls"))
             if len(Script) == 0:
+                print(Soup)
                 print("被认定为爬虫，请更新策略。")
                 exit()
             Str_script = str(Script[0])
