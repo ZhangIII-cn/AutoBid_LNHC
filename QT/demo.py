@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
     QFileDialog,QDialog)
 from Mylib.Function_Spider import *
 from dialog import Ui_Dialog
+import threading
 
 class Thread_Spider(QThread):
 
