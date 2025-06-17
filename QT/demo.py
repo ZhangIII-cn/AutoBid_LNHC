@@ -14,10 +14,17 @@ from Mylib.Function_Spider import *
 from dialog import Ui_Dialog
 import threading
 
-class Thread_Spider(QThread):
+#---------------全局变量--------------------------------------------------------------------------------------------------------
+Counter_Page_Finished=0
+Counter_Page_Number=10
+Flag_Finished_Spider=False
+task_done_event = threading.Event()
 
+class Thread_Spider(QThread):
     def run(self):
+        print(str(Counter_Page_Number) + '/' + str(Counter_Page_Finished))
         Spider_Work()
+        # task_done_event.set()
 
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
@@ -28,15 +35,16 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def click_start(self):
         #----------------------- Show Dialog UI -------------------------------------------------------------------------------------------
-        dialog = QDialog(self)
+        self.dialog = QDialog(self)
         ui = Ui_Dialog()
-        ui.setupUi(dialog)
-        dialog.show()
-        print(2)
-        #---------------------—— 多线程实现爬虫功能与QT进度条的同步 -----------------------------------------------------------------------------
+        ui.setupUi(self.dialog)
+        self.dialog.show()
 
+        #---------------------—— 多线程实现爬虫功能与QT进度条的同步 -----------------------------------------------------------------------------
         self.thread=Thread_Spider()
         self.thread.start()
+        task_done_event.wait()
+        print("Finished")
 
 
 
