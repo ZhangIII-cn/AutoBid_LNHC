@@ -43,21 +43,24 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def click_start(self):
         #----------------------- Show Dialog UI -------------------------------------------------------------------------------------------
         self.dialog = QDialog(self)
-        ui = Ui_Dialog()
-        ui.setupUi(self.dialog)
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self.dialog)
         self.dialog.show()
         #---------------------—— 多线程实现爬虫功能与QT进度条的同步 -----------------------------------------------------------------------------
         self.thread=Thread_Spider()
         self.thread.Signal_Finish.connect(self.on_Thread_Spider_Finished)
         self.thread.Index_ProgressBar.connect(self.on_Thread_Data_Changed)
+        # self.thread.Index_ProgressBar.connect(self.ui.Bar_Update)
         self.thread.start()
         # task_done_event.wait()
 
     def on_Thread_Spider_Finished(self):
         print("Spider Finished!")
 
-    def on_Thread_Data_Changed(self,index,value):
-        print(index,value)
+    def on_Thread_Data_Changed(self,index,value): # 同步更新子Dialog窗口中的进度条
+        My_Dialog=self.ui
+        My_Dialog.ProgressBar_Update(index,value)
+
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
