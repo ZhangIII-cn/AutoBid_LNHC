@@ -20,17 +20,25 @@ Counter_Page_Number=10
 Flag_Finished_Spider=False
 task_done_event = threading.Event()
 
-class Thread_Spider(QThread):
-    Signal_Finish = pyqtSignal()
-    Index_ProgressBar= pyqtSignal(int,int)
+class Thread_WriteFile(QThread):
+    def __init__(self):
+        QThread.__init__(self)
+
+
+class Thread_Spider(QThread): #爬虫工作线程
+    Signal_Finish=pyqtSignal()
+    Index_ProgressBar=pyqtSignal(int,int)
+
+    def __init__(self,parent=None):
+        super().__init__(parent)  #要首先调用父类的初始化方法
 
     def run(self):
         for i in range(0,Counter_Page_Number):
-            # print(str(i) + '/' + str(Counter_Page_Finished))
+            print(str(i) + '/' + str(Counter_Page_Finished))
             self.Index_ProgressBar.emit(i,Counter_Page_Number)
             time.sleep(0.5)
 
-        Spider_Work()
+        Spider_Work(["无人机"],1)
         self.Signal_Finish.emit() #Signal transferred to main thread.
         # task_done_event.set()
 
@@ -47,7 +55,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self.dialog)
         self.dialog.show()
         #---------------------—— 多线程实现爬虫功能与QT进度条的同步 -----------------------------------------------------------------------------
-        self.thread=Thread_Spider()
+        self.thread=Thread_Spider(parent=self)
         self.thread.Signal_Finish.connect(self.on_Thread_Spider_Finished)
         self.thread.Index_ProgressBar.connect(self.on_Thread_Data_Changed)
         # self.thread.Index_ProgressBar.connect(self.ui.Bar_Update)
@@ -86,7 +94,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.label.setWordWrap(False)
         self.label.setObjectName("label")
         self.comboBox = QtWidgets.QComboBox(parent=self.centralwidget)
-        self.comboBox.setGeometry(QtCore.QRect(200, 90, 211, 31))
+        self.comboBox.setGeometry(QtCore.QRect(200, 90, 260, 31)) #左上角坐标（x,y),宽,高
         font = QtGui.QFont()
         font.setPointSize(12)
         self.comboBox.setFont(font)
@@ -292,15 +300,15 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "翰诚科技标书自动化平台"))
         self.label.setText(_translate("MainWindow", "目标网站"))
         self.comboBox.setItemText(0, _translate("MainWindow", "中国政府采购网（CCGP）"))
-        self.comboBox.setItemText(1, _translate("MainWindow", "辽宁省政府采购网"))
-        self.comboBox.setItemText(2, _translate("MainWindow", "云采通高校采购联盟"))
+        self.comboBox.setItemText(1, _translate("MainWindow", "辽宁省政府采购网（暂未开放）"))
+        self.comboBox.setItemText(2, _translate("MainWindow", "云采通高校采购联盟（暂未开放）"))
         self.label_2.setText(_translate("MainWindow", "关键词"))
         self.Button_AddWord.setText(_translate("MainWindow", "添加搜索词"))
         self.label_3.setText(_translate("MainWindow", "时间范围"))
         self.radio_1.setText(_translate("MainWindow", "三天内"))
         self.radio_2.setText(_translate("MainWindow", "一周内"))
         self.radio_3.setText(_translate("MainWindow", "一月内"))
-        self.radio_4.setText(_translate("MainWindow", "半年内"))
+        self.radio_4.setText(_translate("MainWindow", "三月内"))
         self.Button_Work.setText(_translate("MainWindow", "开始获取"))
         self.label_4.setText(_translate("MainWindow", "搜索地区"))
         self.CheckBox_JL.setText(_translate("MainWindow", "吉林"))

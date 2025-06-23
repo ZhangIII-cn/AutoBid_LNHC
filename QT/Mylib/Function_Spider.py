@@ -41,12 +41,16 @@ def load_excel(CSV_Set,str="中国政府采购网"):
 
 
 
-def Spider_Work():
-    Keyword_Dict = ['无人机']  # %E6%97%A0%E4%BA%BA%E6%9C%BA
+def Spider_Work(Keyword_Dict=[],Time_type=1,Region_Dict=[]):
+    # Time_type = 1 : 三天内                 Region_Dict为空时 表明选取全部地区
+    # Time_type = 2 ：一周内
+    # Time_type = 3 : 一月内
+    # Time_type = 4 : 近三月
+    # Keyword_Dict = ['无人机']  # %E6%97%A0%E4%BA%BA%E6%9C%BA
     Region_Dict = ['辽宁', '大连', '山东', '北京']
     Page_number = 1
     CSV_Set = set()
-    print(1)
+    print(Keyword_Dict)
     return
 
 
