@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
     QFileDialog,QDialog)
 from Mylib.Function_Spider import *
 from dialog import Ui_Dialog
+from dialog_finish import Dialog_Finish
 import threading
 
 #---------------全局变量--------------------------------------------------------------------------------------------------------
@@ -36,7 +37,7 @@ class Thread_Spider(QThread): #爬虫工作线程
         for i in range(0,Counter_Page_Number):
             print(str(i) + '/' + str(Counter_Page_Finished))
             self.Index_ProgressBar.emit(i,Counter_Page_Number)
-            time.sleep(0.5)
+            # time.sleep(0.5)
 
         Spider_Work(["无人机"],1)
         self.Signal_Finish.emit() #Signal transferred to main thread.
@@ -63,7 +64,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # task_done_event.wait()
 
     def on_Thread_Spider_Finished(self):
-        print("Spider Finished!")
+        # print("Spider Finished!")
+        self.dialog_finish=QDialog(self)
+        self.ui_dialog_finish = Dialog_Finish()
+        self.ui_dialog_finish.setupUi(self.dialog_finish)
+        self.dialog_finish.show()
+
 
     def on_Thread_Data_Changed(self,index,value): # 同步更新子Dialog窗口中的进度条
         My_Dialog=self.ui
