@@ -10,6 +10,11 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 
 
 class Dialog_Finish(object):
+    def click_finish(self):
+        print("clicked")
+        self.close()  #BUG
+
+
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(463, 232)
@@ -19,6 +24,7 @@ class Dialog_Finish(object):
         font.setPointSize(12)
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("pushButton")
+        self.pushButton.clicked.connect(self.click_finish)
         self.label = QtWidgets.QLabel(parent=Dialog)
         self.label.setGeometry(QtCore.QRect(180, 50, 131, 31))
         font = QtGui.QFont()

@@ -63,12 +63,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.thread.start()
         # task_done_event.wait()
 
-    def on_Thread_Spider_Finished(self):
+    def on_Thread_Spider_Finished(self): #完成爬虫线程后调用
         # print("Spider Finished!")
         self.dialog_finish=QDialog(self)
         self.ui_dialog_finish = Dialog_Finish()
         self.ui_dialog_finish.setupUi(self.dialog_finish)
-        self.dialog_finish.show()
+        self.dialog_finish.exec()
 
 
     def on_Thread_Data_Changed(self,index,value): # 同步更新子Dialog窗口中的进度条
