@@ -10,6 +10,12 @@ from PyQt6.QtWidgets import QDialog,QApplication
 
 
 class Ui_Dialog(object):
+    # def __init__(self,parent=None):  无法调用
+    #     # super().__init__(parent)
+    #     super(Ui_Dialog, self).__init__()
+    #     self.setupUi(self)
+    #     self.retranslateUi(self)
+
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(781, 392)

@@ -25,13 +25,16 @@ class Thread_WriteFile(QThread):
     def __init__(self):
         QThread.__init__(self)
 
-
 class Thread_Spider(QThread): #爬虫工作线程
     Signal_Finish=pyqtSignal()
     Index_ProgressBar=pyqtSignal(int,int)
 
     def __init__(self,parent=None):
         super().__init__(parent)  #要首先调用父类的初始化方法
+        #获取界面选项信息
+        self.keyword_dict=["无人机"]
+        # self.time_type=(
+        print(parent.children())
 
     def run(self):
         for i in range(0,Counter_Page_Number):
@@ -39,7 +42,8 @@ class Thread_Spider(QThread): #爬虫工作线程
             self.Index_ProgressBar.emit(i,Counter_Page_Number)
             # time.sleep(0.5)
 
-        Spider_Work(["无人机"],1)
+
+        Spider_Work(self.keyword_dict)
         self.Signal_Finish.emit() #Signal transferred to main thread.
         # task_done_event.set()
 
@@ -54,12 +58,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.dialog = QDialog(self)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self.dialog)
+        # self.dialog=Ui_Dialog(self)  此方法无法调用
         self.dialog.show()
         #---------------------—— 多线程实现爬虫功能与QT进度条的同步 -----------------------------------------------------------------------------
         self.thread=Thread_Spider(parent=self)
         self.thread.Signal_Finish.connect(self.on_Thread_Spider_Finished)
         self.thread.Index_ProgressBar.connect(self.on_Thread_Data_Changed)
-        # self.thread.Index_ProgressBar.connect(self.ui.Bar_Update)
         self.thread.start()
         # task_done_event.wait()
 
@@ -68,13 +72,18 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.dialog_finish=QDialog(self)
         self.ui_dialog_finish = Dialog_Finish()
         self.ui_dialog_finish.setupUi(self.dialog_finish)
-        self.dialog_finish.exec()
+        self.ui_dialog_finish.Signal_Close_Dialog.connect(self.close_finish_dialog)
+        self.dialog_finish.show()
+        # self.dialog_finish.close()
 
 
     def on_Thread_Data_Changed(self,index,value): # 同步更新子Dialog窗口中的进度条
         My_Dialog=self.ui
         My_Dialog.ProgressBar_Update(index,value)
 
+    def close_finish_dialog(self):  #按确认键关闭提示窗口
+        # print("emited!")
+        self.dialog_finish.close()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")

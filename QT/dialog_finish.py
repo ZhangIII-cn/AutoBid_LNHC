@@ -7,12 +7,16 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QDialog
 
 
-class Dialog_Finish(object):
+class Dialog_Finish(QDialog):
+    Signal_Close_Dialog = pyqtSignal()
     def click_finish(self):
-        print("clicked")
-        self.close()  #BUG
+        # print(self)
+        self.Signal_Close_Dialog.emit()
+        # self.close()  #BUG
 
 
     def setupUi(self, Dialog):
