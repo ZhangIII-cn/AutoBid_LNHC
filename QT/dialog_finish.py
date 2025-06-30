@@ -28,7 +28,7 @@ class Dialog_Finish(QDialog):
         font.setPointSize(12)
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("pushButton")
-        self.pushButton.clicked.connect(self.click_finish)
+        self.pushButton.clicked.connect(self.click_finish)  #绑定按钮点击事件
         self.label = QtWidgets.QLabel(parent=Dialog)
         self.label.setGeometry(QtCore.QRect(180, 50, 131, 31))
         font = QtGui.QFont()

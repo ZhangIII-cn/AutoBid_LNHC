@@ -10,14 +10,14 @@ from PyQt6.QtCore import Qt, QSize, QThread, pyqtSignal
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QPushButton, QMainWindow, QLabel, QHBoxLayout, QVBoxLayout, QLineEdit, QMessageBox,
     QFileDialog,QDialog)
-from Mylib.Function_Spider import *
+from Mylib.Function_Spider_CCGP import *
 from dialog import Ui_Dialog
 from dialog_finish import Dialog_Finish
 import threading
 
 #---------------全局变量--------------------------------------------------------------------------------------------------------
 Counter_Page_Finished=0
-Counter_Page_Number=10
+Counter_Page_Number=0
 Flag_Finished_Spider=False
 task_done_event = threading.Event()
 
@@ -31,10 +31,11 @@ class Thread_Spider(QThread): #爬虫工作线程
 
     def __init__(self,parent=None):
         super().__init__(parent)  #要首先调用父类的初始化方法
-        #获取界面选项信息
-        self.keyword_dict=["无人机"]
-        # self.time_type=(
-        print(parent.children())
+        # 从父类获取界面选项信息
+        self.keyword_dict=parent.Data_Selection['keyword_dict']
+        self.time_type=parent.Data_Selection['time_type']
+        self.region_dict=parent.Data_Selection['region_dict']
+        self.website_selection=parent.Website_Selection
 
     def run(self):
         for i in range(0,Counter_Page_Number):
@@ -42,8 +43,8 @@ class Thread_Spider(QThread): #爬虫工作线程
             self.Index_ProgressBar.emit(i,Counter_Page_Number)
             # time.sleep(0.5)
 
-
-        Spider_Work(self.keyword_dict)
+        if self.website_selection == 1:
+            Spider_Work_CCGP(self.keyword_dict,self.time_type,self.region_dict)
         self.Signal_Finish.emit() #Signal transferred to main thread.
         # task_done_event.set()
 
@@ -52,13 +53,20 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         super(Ui_MainWindow, self).__init__()
         self.setupUi(self)
         self.retranslateUi(self)
+        self.Data_Selection={'keyword_dict':['无人机'],'time_type':1,'region_dict':['全部']}
+        self.Website_Selection=1  # 1 -> CCGP
 
     def click_start(self):
+        #------------------------- 获取主窗口控件信息 -----------------------------------------------------------------------------------
+
+
+
+
+
         #----------------------- Show Dialog UI -------------------------------------------------------------------------------------------
         self.dialog = QDialog(self)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self.dialog)
-        # self.dialog=Ui_Dialog(self)  此方法无法调用
         self.dialog.show()
         #---------------------—— 多线程实现爬虫功能与QT进度条的同步 -----------------------------------------------------------------------------
         self.thread=Thread_Spider(parent=self)
@@ -76,14 +84,20 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.dialog_finish.show()
         # self.dialog_finish.close()
 
+    def on_Thread_Spider_Error(self):  #处理爬虫过程中的错误信息
+        print("error")
 
     def on_Thread_Data_Changed(self,index,value): # 同步更新子Dialog窗口中的进度条
         My_Dialog=self.ui
-        My_Dialog.ProgressBar_Update(index,value)
+        if value == 0:
+            My_Dialog.ProgressBar_Update(0, 0)
+        else:
+            My_Dialog.ProgressBar_Update(index,value)
 
-    def close_finish_dialog(self):  #按确认键关闭提示窗口
+    def close_finish_dialog(self):  #按确认键关闭提示窗口,同时关闭两个窗口
         # print("emited!")
         self.dialog_finish.close()
+        self.dialog.close()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -183,7 +197,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.horizontalLayout_2.addWidget(self.radio_4)
         self.Button_Work = QtWidgets.QPushButton(parent=self.centralwidget)
         self.Button_Work.setGeometry(QtCore.QRect(360, 440, 131, 41))
-        self.Button_Work.clicked.connect(self.click_start)
+        self.Button_Work.clicked.connect(self.click_start)   #绑定点击事件
 
         font = QtGui.QFont()
         font.setPointSize(12)
