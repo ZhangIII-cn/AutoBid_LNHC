@@ -21,11 +21,14 @@ Counter_Page_Number=0
 Flag_Finished_Spider=False
 task_done_event = threading.Event()
 
+
 class Thread_WriteFile(QThread):
     def __init__(self):
         QThread.__init__(self)
 
-class Thread_Spider(QThread): #爬虫工作线程
+
+#---------------------------------------------------- 爬虫工作线程 --------------------------------------------------------
+class Thread_Spider(QThread):
     Signal_Finish=pyqtSignal()
     Index_ProgressBar=pyqtSignal(int,int)
 
@@ -36,6 +39,7 @@ class Thread_Spider(QThread): #爬虫工作线程
         self.time_type=parent.Data_Selection['time_type']
         self.region_dict=parent.Data_Selection['region_dict']
         self.website_selection=parent.Website_Selection
+
 
     def run(self):
         for i in range(0,Counter_Page_Number):
@@ -48,6 +52,9 @@ class Thread_Spider(QThread): #爬虫工作线程
         self.Signal_Finish.emit() #Signal transferred to main thread.
         # task_done_event.set()
 
+
+
+#---------------------------------------------------- 主窗口线程 --------------------------------------------------------
 class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
@@ -55,10 +62,18 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.retranslateUi(self)
         self.Data_Selection={'keyword_dict':['无人机'],'time_type':1,'region_dict':['全部']}
         self.Website_Selection=1  # 1 -> CCGP
+        self.CheckBox_All.clicked.connect(self.on_Checkbox_Changed_All_Selected)  # 多选框绑定点击事件：选择“全部”时其他选项全部取消，选择其他任意一项时自动取消“全部”选项
+        self.CheckBox_BJ.toggled .connect(self.on_Checkbox_Changed_One_Selected)
+        self.CheckBox_DL.toggled .connect(self.on_Checkbox_Changed_One_Selected)
+        self.CheckBox_JL.toggled .connect(self.on_Checkbox_Changed_One_Selected)
+        self.CheckBox_LN.toggled .connect(self.on_Checkbox_Changed_One_Selected)
+        self.CheckBox_SD.toggled .connect(self.on_Checkbox_Changed_One_Selected)
+        self.CheckBox_ZJ.toggled .connect(self.on_Checkbox_Changed_One_Selected)
+        self.CheckBox_HLJ.toggled .connect(self.on_Checkbox_Changed_One_Selected)
+        self.Count_CheckBox_Checked=1
 
     def click_start(self):
         #------------------------- 获取主窗口控件信息 -----------------------------------------------------------------------------------
-        #...
 
 
 
@@ -81,7 +96,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.dialog_finish=QDialog(self)
         self.ui_dialog_finish = Dialog_Finish()
         self.ui_dialog_finish.setupUi(self.dialog_finish)
-        self.ui_dialog_finish.Signal_Close_Dialog.connect(self.close_finish_dialog)
+        self.ui_dialog_finish.Signal_Close_Dialog.connect(self.Close_Finish_Dialog)
         self.dialog_finish.show()
         # self.dialog_finish.close()
 
@@ -95,10 +110,32 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         else:
             My_Dialog.ProgressBar_Update(index,value)
 
-    def close_finish_dialog(self):  #按确认键关闭提示窗口,同时关闭两个窗口
+    def Close_Finish_Dialog(self):  #按确认键关闭提示窗口,同时关闭两个窗口
         # print("emited!")
         self.dialog_finish.close()
         self.dialog.close()
+
+    #-------------------多选框Checkbox : 为了保证始终有一个选项，要求实现：当最后一个checked项为“全选”时，该项不能取消;如果最后一个选项为任意项时，取消后默认选择“全选”----------------------------
+    def on_Checkbox_Changed_All_Selected(self):  #选中多选框的“全选”时，将其他所有选项都设为未选择。
+        # print(self.CheckBox_All.isChecked())
+        if self.CheckBox_All.isChecked() == False and self.Count_CheckBox_Checked == 1 :
+            self.CheckBox_All.setChecked(True)
+        else:
+            print("all clear")
+
+    def on_Checkbox_Changed_One_Selected(self):  #选中多选框的任意一项时，将“全选”选项设为未选择
+        if self.sender().isChecked() == False:
+            self.Count_CheckBox_Checked -= 1
+            if self.Count_CheckBox_Checked == 0:
+                self.CheckBox_All.setChecked(True)
+                self.Count_CheckBox_Checked += 1
+        else : #选中
+            self.Count_CheckBox_Checked += 1
+            if self.CheckBox_All.isChecked()==True:
+                self.CheckBox_All.setChecked(False)
+                self.Count_CheckBox_Checked -= 1
+
+
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -199,7 +236,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_Work = QtWidgets.QPushButton(parent=self.centralwidget)
         self.Button_Work.setGeometry(QtCore.QRect(360, 440, 131, 41))
         self.Button_Work.clicked.connect(self.click_start)   #绑定点击事件
-
         font = QtGui.QFont()
         font.setPointSize(12)
         self.Button_Work.setFont(font)
@@ -336,6 +372,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_AddWord.setText(_translate("MainWindow", "添加搜索词"))
         self.label_3.setText(_translate("MainWindow", "时间范围"))
         self.radio_1.setText(_translate("MainWindow", "三天内"))
+        self.radio_1.setChecked(True)
         self.radio_2.setText(_translate("MainWindow", "一周内"))
         self.radio_3.setText(_translate("MainWindow", "一月内"))
         self.radio_4.setText(_translate("MainWindow", "三月内"))
