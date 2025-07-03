@@ -54,13 +54,16 @@ class Thread_Spider(QThread):
 
 
 
+
+
+
 #---------------------------------------------------- 主窗口线程 --------------------------------------------------------
 class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
         self.setupUi(self)
         self.retranslateUi(self)
-        self.Data_Selection={'keyword_dict':['无人机'],'time_type':1,'region_dict':['全部']}
+        self.Data_Selection={'keyword_dict':[],'time_type':1,'region_dict':[]}   #主窗口缓存的选项信息
         self.Website_Selection=1  # 1 -> CCGP
         self.CheckBox_All.clicked.connect(self.on_Checkbox_Changed_All_Selected)  # 多选框绑定点击事件：选择“全部”时其他选项全部取消，选择其他任意一项时自动取消“全部”选项
         self.CheckBox_BJ.toggled .connect(self.on_Checkbox_Changed_One_Selected)
@@ -74,8 +77,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def click_start(self):
         #------------------------- 获取主窗口控件信息 -----------------------------------------------------------------------------------
-
-
+        self.Data_Selection['keyword_dict']=['无人机']
+        
 
 
 
@@ -120,8 +123,16 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # print(self.CheckBox_All.isChecked())
         if self.CheckBox_All.isChecked() == False and self.Count_CheckBox_Checked == 1 :
             self.CheckBox_All.setChecked(True)
-        else:
-            print("all clear")
+        elif self.CheckBox_All.isChecked() == True:
+            self.CheckBox_ZJ.setChecked(False)
+            self.CheckBox_BJ.setChecked(False)
+            self.CheckBox_DL.setChecked(False)
+            self.CheckBox_LN.setChecked(False)
+            self.CheckBox_JL.setChecked(False)
+            self.CheckBox_SD.setChecked(False)
+            self.CheckBox_HLJ.setChecked(False)
+            self.Count_CheckBox_Checked = 1
+
 
     def on_Checkbox_Changed_One_Selected(self):  #选中多选框的任意一项时，将“全选”选项设为未选择
         if self.sender().isChecked() == False:
@@ -372,7 +383,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.Button_AddWord.setText(_translate("MainWindow", "添加搜索词"))
         self.label_3.setText(_translate("MainWindow", "时间范围"))
         self.radio_1.setText(_translate("MainWindow", "三天内"))
-        self.radio_1.setChecked(True)
+        self.radio_1.setChecked(True)  #初始默认选择三天内
         self.radio_2.setText(_translate("MainWindow", "一周内"))
         self.radio_3.setText(_translate("MainWindow", "一月内"))
         self.radio_4.setText(_translate("MainWindow", "三月内"))
