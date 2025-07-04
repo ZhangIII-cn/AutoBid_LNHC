@@ -8,7 +8,7 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtCore import Qt, QSize, QThread, pyqtSignal
 from PyQt6.QtWidgets import (
-    QApplication, QWidget, QPushButton, QMainWindow, QLabel, QHBoxLayout, QVBoxLayout, QLineEdit, QMessageBox,
+    QApplication, QWidget, QPushButton, QMainWindow, QLabel, QHBoxLayout, QVBoxLayout, QLineEdit, QMessageBox,QCheckBox,
     QFileDialog,QDialog)
 from Mylib.Function_Spider_CCGP import *
 from dialog import Ui_Dialog
@@ -47,7 +47,7 @@ class Thread_Spider(QThread):
             self.Index_ProgressBar.emit(i,Counter_Page_Number)
             # time.sleep(0.5)
 
-        if self.website_selection == 1:
+        if self.website_selection == 1:  #CCGP中国政府采购网
             Spider_Work_CCGP(self.keyword_dict,self.time_type,self.region_dict)
         self.Signal_Finish.emit() #Signal transferred to main thread.
         # task_done_event.set()
@@ -74,13 +74,20 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.CheckBox_ZJ.toggled .connect(self.on_Checkbox_Changed_One_Selected)
         self.CheckBox_HLJ.toggled .connect(self.on_Checkbox_Changed_One_Selected)
         self.Count_CheckBox_Checked=1
+        self.Region_Dict={'CheckBox_All':'全部','CheckBox_BJ':'北京','CheckBox_DL':'大连','CheckBox_JL':'吉林','CheckBox_LN':'辽宁','CheckBox_SD':'山东','CheckBox_ZJ':'浙江','CheckBox_HLJ':'黑龙江'}
 
     def click_start(self):
         #------------------------- 获取主窗口控件信息 -----------------------------------------------------------------------------------
         self.Data_Selection['keyword_dict']=['无人机']
-        
-
-
+        self.Data_Selection['time_type'] = 1 if self.radio_1.isChecked()==True else (2 if self.radio_2.isChecked()==True else (3 if self.radio_3.isChecked()==True else 4))
+        self.Data_Selection['region_dict'].clear()
+        for child in self.findChildren(QCheckBox):
+            if child.isChecked()==True:
+                # print(child.objectName())
+                self.Data_Selection['region_dict'].append(self.Region_Dict[child.objectName()])
+        # print(self.Data_Selection['region_dict'])
+        # if self.comboBox.
+        self.Website_Selection=1
 
         #----------------------- Show Dialog UI -------------------------------------------------------------------------------------------
         self.dialog = QDialog(self)
